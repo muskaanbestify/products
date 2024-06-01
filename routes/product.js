@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-}); 
+});
 
 // Update a product
 router.put('/:id', async (req, res) => {
