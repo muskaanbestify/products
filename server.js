@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./routes/product');
 
 dotenv.config();
 
@@ -18,6 +18,7 @@ app.use('/api/products', productRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
+  dbName: 'unlockdiscounts',
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

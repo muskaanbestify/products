@@ -15,12 +15,15 @@ router.get('/', async (req, res) => {
 // Get a specific product by ID
 router.get('/:id', async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const productId = req.params.id;
+    console.log('Product ID:', productId);
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
     res.json(product);
   } catch (err) {
+    console.error('Error fetching product:', err);
     res.status(500).json({ message: err.message });
   }
 });
