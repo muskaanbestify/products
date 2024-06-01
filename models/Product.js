@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
   title: {
     type: String,
     required: true
@@ -19,7 +22,7 @@ const productSchema = new mongoose.Schema({
   },
   affiliateLink: {
     type: String,
-    required: true // This field is optional
+    required: true 
   },
   category: {
     type: String,
