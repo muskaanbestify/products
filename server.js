@@ -17,7 +17,7 @@ app.use(express.json());
 app.use('/api/products', productRoutes);
 
 // MongoDB connection
-mongoose.connect( "mongodb+srv://muskaanvirdi2601:OICRAgSOYjBLgw4s@cluster0.8g2supr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+mongoose.connect(process.env.MONGODB_URI || " mongodb+srv://muskaanvirdi2601:OICRAgSOYjBLgw4s@cluster0.8g2supr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
   dbName: 'unlockdiscounts',
   useNewUrlParser: true,
   useUnifiedTopology: true,
