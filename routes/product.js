@@ -2,10 +2,25 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 
-// Get all products
+// Get all products or search for products
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find();
+    const query = req.query.q;
+    let products;
+    
+    if (query) {
+      // If there's a search query, filter products by name or description
+      products = await Product.find({
+        $or: [
+          { name: { $regex: query, $options: 'i' } }, // Case-insensitive search
+          { description: { $regex: query, $options: 'i' } }
+        ]
+      });
+    } else {
+      // If no search query, return all products
+      products = await Product.find();
+    }
+    
     res.json(products);
   } catch (err) {
     res.status(500).json({ message: err.message });
