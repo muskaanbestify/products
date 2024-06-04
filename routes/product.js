@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
       // If there's a search query, filter products by name or description
       products = await Product.find({
         $or: [
-          { name: { $regex: query, $options: 'i' } }, // Case-insensitive search
+          { title: { $regex: query, $options: 'i' } }, // Case-insensitive search
           { description: { $regex: query, $options: 'i' } }
         ]
       });
