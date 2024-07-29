@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const http = require('http');
 const productRoutes = require('./routes/product');
 
 dotenv.config();
@@ -21,6 +22,7 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://muskaanvirdi2601:OICR
   dbName: 'unlockdiscounts',
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
 })
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
@@ -36,8 +38,16 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+// Keep-alive mechanism
+setInterval(() => {
+  http.get('http://localhost:' + PORT, (res) => {
+    console.log(`Keep-alive request sent. Status code: ${res.statusCode}`);
+  }).on('error', (e) => {
+    console.error(`Keep-alive request failed: ${e.message}`);
+  });
+}, 600000); // Send a keep-alive request every 10 minutes (600000 ms)
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
