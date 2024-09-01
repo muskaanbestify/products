@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const http = require('http');
-const productRoutes = require('./routes/product');
+const kidswearRoutes = require('./routes/kidswear')
+const menswearRoutes = require('./routes/menswear')
+const womenswearRoutes = require("./routes/womenswear")
+const appliancesRoutes = require("./routes/appliances")
+const beautyRoutes = require("./routes/beauty")
+const phoneaccessoriesRoutes = require("./routes/phonesaccessories")
 
 dotenv.config();
 
@@ -15,7 +20,14 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/products', productRoutes);
+//https;local host ->
+app.use('/api/kidswear',kidswearRoutes );
+app.use('/api/menswear', menswearRoutes);
+app.use('/api/womenswear', womenswearRoutes);
+app.use('/api/appliances', appliancesRoutes);
+app.use('/api/beauty', beautyRoutes );
+app.use('/api/phoneaccessories', phoneaccessoriesRoutes);
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://muskaanvirdi2601:OICRAgSOYjBLgw4s@cluster0.8g2supr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
