@@ -1,99 +1,89 @@
 const express = require('express');
 const router = express.Router();
-const CertificationVerification = require("../models/CertificationVerification")
-const ErrorHandler = require("../middlewares/error")
+const CertificationVerification = require("../models/CertificationVerification");
+const ErrorHandler = require("../middlewares/error");
 
-router.get('/', async(req, res, next) => {
+// Fetch all certificate entries from the database
+router.get('/', async (req, res, next) => {
     try {
-        //fetch all certificate entries from database
-        let certverify = await CertificationVerification.find()
-        console.log(certverify)
-        if (!certverify || certverify.length === 0){
-            return next(new ErrorHandler("No certificate holder Found", 404))
+        let certverify = await CertificationVerification.find();
+        console.log(certverify);
+        if (!certverify || certverify.length === 0) {
+            return next(new ErrorHandler("No certificate holder found", 404));
         }
-        //Send certificate entries as the response
-
         res.status(200).json({
             success: true,
-            count:certverify.length,
+            count: certverify.length,
             certverify: certverify
-        })
-    } catch(error){
-        //Throw an error to middleware
-        console.log('An error found:', error.message)
-        return next(new ErrorHandler("Failed to retrieve certificate information", 500))
-    }
-})
-
-//Get certificate info by certificate code
-router.get('/', async(req, res, next) => {
-    try{
-        const certificate_code = req.params['certificate_code'];
-        
-        //finding the certificate info by the code
-        let certificationverification = await CertificationVerification.findById(certificate_code)
-
-        res.json(certificationverification)
-
-    }catch(err){
-        console.log('Error:', err)
-        res.status(500).json({message: err.message})
-    }
-})
-
-router.get('/',async (req,res) => {
-    try{
-        // const displayName = req
-        console.log(req.query);
-        // we need to query
-         const mongodata = await CertificationVerification.find(req.query)
-        // no need of request query   http://localhost:3000/allmongo/data
-        //const mongodata = await User.find({category:"Indian&Fusion Wear",sub_category:"Kurtas&Suits"})
-        res.status(200).json(mongodata);
-    }catch(err){
-        console.log(err)
-        res.sendStatus(404);
+        });
+    } catch (error) {
+        console.log('An error occurred:', error.message);
+        return next(new ErrorHandler("Failed to retrieve certificate information", 500));
     }
 });
 
-//Checking the certificate if it's valid
-router.post('/', async(req, res, next) => {
-    try{
-        console.log('Request received')
-        const {intern_name, certificate_code} = req.body;
-        console.log('Body parsed')
+// Get certificate info by certificate code
+router.get('/:certificate_code', async (req, res, next) => {
+    try {
+        const certificate_code = req.params['certificate_code'];
 
-        if(!intern_name || !issue_date || !certificate_code || !is_valid) {
-            return next(new ErrorHandler("Error! Please Fill out the Details", 400));
-          }
+        let certificationverification = await CertificationVerification.findById(certificate_code);
 
-        const newcertificationverification = await CertificationVerification.create({intern_name, issue_date, certificate_code, is_valid})
-        console.log('Certificate entry created successfully')
+        if (!certificationverification) {
+            return res.status(404).json({ message: "Certificate not found." });
+        }
 
-        //return JSON file if success failed
-        if(newcertificationverification.is_valid){
-            res.status(201).json({
+        res.status(200).json(certificationverification);
+
+    } catch (err) {
+        console.log('Error:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Fetch certificate info based on query parameters
+router.get('/search', async (req, res) => {
+    try {
+        console.log(req.query);
+        const mongodata = await CertificationVerification.find(req.query);
+        res.status(200).json(mongodata);
+    } catch (err) {
+        console.log(err);
+        res.status(404).send({ message: "Failed to fetch data" });
+    }
+});
+
+// Verify the certificate
+router.post('/', async (req, res, next) => {
+    try {
+        const { intern_name, certificate_code } = req.body;
+
+        if (!intern_name || !certificate_code) {
+            return res.status(400).json({ message: "Error! Please fill out the details." });
+        }
+
+        // Find the certificate by certificate_code
+        const certificate = await CertificationVerification.findOne({ certificate_code });
+
+        if (!certificate) {
+            return res.status(404).json({ message: "Certificate not found." });
+        }
+
+        // Verify certificate
+        if (certificate.intern_name === intern_name) {
+            res.status(200).json({
                 status: 'Success',
                 message: 'Verified',
                 intern_name,
-                issue_date
-            })
+                issue_date: certificate.issue_date
+            });
         } else {
-            res.json({status: 'Error', message: 'This certificate is invalid'})
+            res.status(400).json({ message: 'Invalid certificate details.' });
         }
-    }catch (error) {
-        console.log("An error occurred:", error);
-    
-        // Handle Mongoose validation errors
-        if (error.name === 'ValidationError') {
-          const validationErrors = Object.values(error.errors).map(err => err.message);
-          return next(new ErrorHandler(validationErrors.join(', '), 400));
-        }
-    
-        // Handle other errors
-        return next(error);
-      }
-
-})
+    } catch (error) {
+        console.error("Error during certificate verification:", error);
+        res.status(500).json({ message: "Failed to verify certificate. Please try again." });
+    }
+});
 
 module.exports = router;

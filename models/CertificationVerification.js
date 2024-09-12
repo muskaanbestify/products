@@ -10,6 +10,10 @@ const CertificationVerificationSchema = new mongoose.Schema({
         type: String,
         required:true
     },
+    joining_date:{
+        type: String,
+        required:true
+    },
     certificate_code:{
         type: String,
         required: true
@@ -18,6 +22,7 @@ const CertificationVerificationSchema = new mongoose.Schema({
         type: Boolean,
         required: true
     },
+
 })
 
 const CertificationVerification = mongoose.model("CertificationVerification", CertificationVerificationSchema);
