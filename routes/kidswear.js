@@ -5,29 +5,49 @@ const ErrorHandler = require("../middlewares/error")
 
 
 // Get all kidswear items
-router.get('/', async (req, res, next) => {
-    try {
-      // Fetch all kidswear items from the database
-       let kidswear = await KidsWear.find();
-       console.log(kidswear)
-     
-    // Check if the kidswear collection is empty
-      if (!kidswear || kidswear.length === 0) {
-        return next(new ErrorHandler("No kidswear Item Found", 404));
-      }
+router.get("/", async (req, res, next) => {
+  // fetching query with pae number and other query parameters
+  const query = req.query;
 
-      // Send the kidswear items as the response
-      res.status(200).json({
-        success: true,
-        count: kidswear.length,
-        kidswear: kidswear, //sending the retrieved kidswear collection in response !
-      });
-    } catch (error) {
-      console.log("An error occurred:", error.message);
-      // Pass the error to the error-handling middleware
-      return next(new ErrorHandler("Failed to retrieve kidswear items", 500));
+  console.log("Query:", query);
+  // Extract the page number from the query and remove it from the query object
+  const { page, limit, ...restQuery } = query;
+
+  // Create a query object with the remaining query parameters
+
+  // restQuery may contain other query parameters like category, sub_category, etc.
+  const queryObject = { ...restQuery };
+
+  // If the page number is not provided, set it to 1
+  const pageNumber = parseInt(page) || 1;
+  const productsimit = parseInt(limit) || 25;
+  // console.log("Page Number:", productsimit);
+  // console.log("Query:", query);
+  try {
+    // Fetch all kidswear items from the database with pagination
+    let kidswear = await KidsWear.find(queryObject)
+      .limit(productsimit)
+      .skip((pageNumber - 1) * productsimit); //finding all the kidswear items according to the query
+    // console.log(kidswear);
+
+    // Check if the kidswear collection is empty
+    if (!kidswear || kidswear.length === 0) {
+      return next(new ErrorHandler("No kidswear Item Found", 404));
     }
-  });
+
+    // Send the kidswear items as the response
+    res.status(200).json({
+      success: true,
+      count: kidswear.length,
+      kidswear: kidswear, //sending the retrieved kidswear collection in response !
+    });
+  } catch (error) {
+    console.log("An error occurred:", error.message);
+    // Pass the error to the error-handling middleware
+    return next(new ErrorHandler("Failed to retrieve kidswear items", 500));
+  }
+});
+
 
 //Get a kidswear Item by Id
 router.get('/:id', async(req,res) => {

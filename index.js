@@ -20,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+//https;local host ->
 app.use('/api/kidswear',kidswearRoutes );
 app.use('/api/menswear', menswearRoutes);
 app.use('/api/womenswear', womenswearRoutes);
