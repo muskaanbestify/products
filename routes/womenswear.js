@@ -2,17 +2,93 @@ const express = require('express');
 const router = express.Router();
 const WomensWear = require("../models/WomensWear")
 const ErrorHandler = require("../middlewares/error")
+const url = require("url");
 
 
+// Function to parse the query parameters from the URL
+const parseQueryParams = (query) => {
+  const parsedQuery = {};
+  let currentKey = null;
+  //
+  query.split("&").forEach((param) => {
+    const [key, value] = param.split("=");
+    if (parsedQuery[key]) {
+      parsedQuery[key] += `&${value}`;
+    } else if (currentKey && !value) {
+      parsedQuery[currentKey] += `&${key}`;
+    } else {
+      parsedQuery[key] = value;
+      currentKey = key;
+    }
+  });
+
+   // Decode the query parameters
+  for (let key in parsedQuery) {
+    parsedQuery[key] = decodeURIComponent(parsedQuery[key]);
+  }
+
+  console.log('PARSED QUERY',parsedQuery)
+  return parsedQuery;
+  
+};
+
+//example : http://localhost:8080/api/womenswear?pageNo=1&limit=25&category=Sports%20&%20Active%20Wear&sub_category=Clothing
 // Get all womenswear items
 router.get('/', async (req, res, next) => {
+    // taking request query storing that in query
+    // const query = req.query;
+    const query = url.parse(req.url).query; 
+    console.log(query);
+
+    // extracting the actual query parameters, using above function to decode the url
+    const parsedQuery = query ? parseQueryParams(query) : {};     
+
+    const { pageNo,limit, ...restAll } = parsedQuery; 
+    console.log('qUERY:',parsedQuery);
+    
+    // enocde the query, converting & to %26
+    //checking the url , to know 
+    // const jsonString = JSON.stringify(query);
+    // const encodequery = encodeURIComponent(jsonString)
+    // console.log(encodequery)
+    // const decodequery = decodeURIComponent(encodequery)
+    // console.log(decodequery)
+
+    // const convt = new URLSearchParams(restAll).toString(); 
+    // console.log(convt)
+
+    // Clean up and normalize query parameters
+    // const cleanedQuery = Object.entries(restAll).reduce((acc, [key, value]) => {
+    //   // Trim spaces from both key and value
+    //   const cleanedKey = key.trim().replace('&','%26');
+    //   const cleanedValue = value.replace('&','%26');
+
+    //   // Only add non-empty values
+    //   if (cleanedValue) {
+    //       acc[cleanedKey] = cleanedValue;
+    //   }
+    //   return acc;
+    // }, {});
+    // console.log("Cleaned Query:", cleanedQuery);
+
+
+    // Create a query object with the remaining query parameters
+    // restAll contain other query parameters like category, sub_category, etc.
+    const queryinfo = { ...restAll };
+    // If the page number is not provided, set it to 1
+    const pageNumber = parseInt(pageNo) || 1;
+    // console.log("Query:", query);
     try {
       // Fetch all womenswear items from the database
       console.log("all fine")
-       let womenswear = await WomensWear.find();
-       console.log(womenswear);
+      let womenswear = await WomensWear.find(queryinfo)
+        .limit(25)
+        .skip((pageNumber - 1) * 25);
+      console.log(queryinfo);
+
+      //console.log(womenswear);
      
-    // Check if the womenswear collection is empty
+      // Check if the womenswear collection is empty
       if (!womenswear || womenswear.length === 0) {
         return next(new ErrorHandler("No Women's Wear Item Found", 404));
       }
@@ -23,7 +99,8 @@ router.get('/', async (req, res, next) => {
         count: womenswear.length,
         womensWear: womenswear, //sending the retrieved womenswear collection in response !
       });
-    } catch (error) {
+    } 
+    catch (error) {
       console.log("An error occurred:", error.message);
       // Pass the error to the error-handling middleware
       return next(new ErrorHandler("Failed to retrieve womenswear items", 500));
