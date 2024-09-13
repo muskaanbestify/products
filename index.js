@@ -5,7 +5,7 @@ const cors = require('cors');
 const http = require('http');
 const productRoutes = require('./routes/product');
 const certificationVerificationRoutes = require('./routes/certificationverification');
-
+const beautyRoutes = require('./routes/beauty')
 dotenv.config();
 
 const app = express();
@@ -18,6 +18,7 @@ app.use(express.json());
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/certificate-verification', certificationVerificationRoutes);
+app.use('/api/beauty', beautyRoutes );
 
 // Root route
 app.get('/', (req, res) => {
