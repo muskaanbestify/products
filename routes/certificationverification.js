@@ -23,11 +23,13 @@ router.get('/', async (req, res, next) => {
 });
 
 // Get certificate info by certificate code
+// Get certificate info by certificate code
 router.get('/:certificate_code', async (req, res, next) => {
     try {
-        const certificate_code = req.params['certificate_code'];
+        const certificate_code = req.params['certificate_code']; // Extract the certificate_code from the URL
 
-        let certificationverification = await CertificationVerification.findById(certificate_code);
+        // Ensure that you are searching for 'certificate_code', not '_id'
+        let certificationverification = await CertificationVerification.findOne({ certificate_code });
 
         if (!certificationverification) {
             return res.status(404).json({ message: "Certificate not found." });
@@ -40,6 +42,7 @@ router.get('/:certificate_code', async (req, res, next) => {
         res.status(500).json({ message: err.message });
     }
 });
+
 
 // Fetch certificate info based on query parameters
 router.get('/search', async (req, res) => {
@@ -56,13 +59,15 @@ router.get('/search', async (req, res) => {
 // Verify the certificate
 router.post('/', async (req, res, next) => {
     try {
+        console.log("Request body:", req.body); // Log the request body to confirm
+
         const { intern_name, certificate_code } = req.body;
 
         if (!intern_name || !certificate_code) {
             return res.status(400).json({ message: "Error! Please fill out the details." });
         }
 
-        // Find the certificate by certificate_code
+        // Find the certificate by certificate_code (ensure the field is correct)
         const certificate = await CertificationVerification.findOne({ certificate_code });
 
         if (!certificate) {
@@ -85,5 +90,6 @@ router.post('/', async (req, res, next) => {
         res.status(500).json({ message: "Failed to verify certificate. Please try again." });
     }
 });
+
 
 module.exports = router;
