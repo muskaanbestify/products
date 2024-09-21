@@ -6,11 +6,15 @@ const CertificationVerificationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    issue_date:{
+    issued_date:{
         type: String,
         required:true
     },
-    joining_date:{
+    Joining_date:{
+        type: String,
+        required:true
+    },
+    Last_date:{
         type: String,
         required:true
     },
