@@ -10,10 +10,10 @@ router.get('/', async (req, res, next) => {
     try {
       // Fetch all appliances items from the database
       console.log("all fine")
-       let appliances = await Appliances.find();
-       console.log(appliances)
+      let appliances = await Appliances.find();
+      console.log(appliances)
      
-    // Check if the appliances collection is empty
+      // Check if the appliances collection is empty
       if (!appliances || appliances.length === 0) {
         return next(new ErrorHandler("No Appliances items found", 404));
       }

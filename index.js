@@ -9,6 +9,7 @@ const womenswearRoutes = require("./routes/womenswear")
 const appliancesRoutes = require("./routes/appliances")
 const beautyRoutes = require("./routes/beauty")
 const phoneaccessoriesRoutes = require("./routes/phonesaccessories")
+const bannerRoutes = require("./routes/banner")
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/api/womenswear', womenswearRoutes);
 app.use('/api/appliances', appliancesRoutes);
 app.use('/api/beauty', beautyRoutes );
 app.use('/api/phoneaccessories', phoneaccessoriesRoutes);
+app.use('/api/banner', bannerRoutes);
 
 
 // MongoDB connection
