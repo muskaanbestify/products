@@ -75,7 +75,8 @@ router.post('/', async (req, res, next) => {
         }
 
         // Verify certificate
-        if (certificate.intern_name === intern_name) {
+        //Without case sensitivity
+        if (certificate.intern_name.toLowerCase() === intern_name.toLowerCase()) {
             res.status(200).json({
                 status: 'Success',
                 message: 'Verified',
