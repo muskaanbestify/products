@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const BlogSchema = new mongoose.Schema({
 
     id:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: Number,
         required:true,
     },
     title:{
