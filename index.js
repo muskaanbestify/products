@@ -1,3 +1,4 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -11,9 +12,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Middleware:: code for conecting the frontend folder to backend folder:
+// app.use(cors({
+//   origin: 'http://localhost:3000'  // Adjust this according to your frontend URL
+// }));
+// app.use(express.json());
 
 // Routes
 app.use('/api/products', productRoutes);
