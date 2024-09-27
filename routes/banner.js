@@ -25,8 +25,8 @@ router.get("/latest", async (req, res, next) => {
 
   // If the page number is not provided, set it to 1
   const pageNumber = parseInt(page) || 1;
-  const productsimit = parseInt(limit) || 60;
-  // console.log("Page Number:", productsimit);
+  const productsLimit = parseInt(limit) || 5;
+  // console.log("Page Number:", productsLimit);
   // console.log("Query:", query);
 
   try {
@@ -36,70 +36,71 @@ router.get("/latest", async (req, res, next) => {
     if (mainCategory === "kidswear") {
       products = await KidsWear.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit * 3)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products);
     } else if (mainCategory === "menswear") {
       products = await MensWear.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit * 3)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products
     } else if (mainCategory === "womenswear") {
       products = await WomensWear.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit * 3)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products
     } else if (mainCategory === "appliances") {
       products = await Appliances.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit * 3)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products
     } else if (mainCategory === "beauty") {
       products = await BeautyModel.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit * 3)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products
     } else if (mainCategory === "phoneaccessories") {
       products = await PhoneAccessories.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit * 3)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products
     } else {
       let menswear = await MensWear.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products);
       let kidswear = await KidsWear.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products);
       let womenswear = await WomensWear.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products);
       let appliances = await Appliances.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products);
       let beauty = await BeautyModel.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products);
       let phoneaccessories = await PhoneAccessories.find(queryObject)
         .sort({ _id: -1 })
-        .limit(productsimit)
-        .skip((pageNumber - 1) * productsimit); //finding all the products items according to the query
+        .limit(productsLimit)
+        .skip((pageNumber - 1) * productsLimit); //finding all the products items according to the query
       // console.log(products);
+
       products = menswear.concat(
         kidswear,
         womenswear,
@@ -117,11 +118,14 @@ router.get("/latest", async (req, res, next) => {
       });
     }
 
+    let extraPages = Math.ceil(products.length / productsLimit);
+
     // Send the products items as the response
     res.status(200).json({
       success: true,
       count: products.length,
       products: products, //sending the retrieved products collection in response !
+      extraPages: extraPages - 1,
     });
   } catch (error) {
     console.log("An error occurred:", error.message);
@@ -136,26 +140,26 @@ router.get("/bestselling-gadgets", async (req, res, next) => {
 
     let queryObject = { category: "Electronics" };
 
-    let productsimit = 30;
+    let productsLimit = 30;
     let products;
     let menswear = await MensWear.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let kidswear = await KidsWear.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let womenswear = await WomensWear.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let appliances = await Appliances.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let beauty = await BeautyModel.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let phoneaccessories = await PhoneAccessories.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
 
     products = menswear.concat(
       kidswear,
@@ -195,26 +199,26 @@ router.get("/handpicked", async (req, res, next) => {
 
     let queryObject = {};
 
-    let productsimit = 10;
+    let productsLimit = 10;
     let products;
     let menswear = await MensWear.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let kidswear = await KidsWear.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let womenswear = await WomensWear.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let appliances = await Appliances.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let beauty = await BeautyModel.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
     let phoneaccessories = await PhoneAccessories.find(queryObject)
       .sort({ _id: -1 })
-      .limit(productsimit);
+      .limit(productsLimit);
 
     products = menswear.concat(
       kidswear,

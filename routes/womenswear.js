@@ -6,31 +6,62 @@ const url = require("url");
 
 
 // Function to parse the query parameters from the URL
-const parseQueryParams = (query) => {
-  const parsedQuery = {};
-  let currentKey = null;
-  //
-  query.split("&").forEach((param) => {
-    const [key, value] = param.split("=");
-    if (parsedQuery[key]) {
-      parsedQuery[key] += `&${value}`;
-    } else if (currentKey && !value) {
-      parsedQuery[currentKey] += `&${key}`;
-    } else {
-      parsedQuery[key] = value;
-      currentKey = key;
+router.get("/", async (req, res, next) => {
+  // fetching query with pae number and other query parameters
+  const query = req.query;
+
+  console.log("Query:", query);
+  // Extract the page number from the query and remove it from the query object
+  const { page, limit, ...restQuery } = query;
+
+  // Create a query object with the remaining query parameters
+
+  // restQuery may contain other query parameters like category, sub_category, etc.
+  const queryObject = { ...restQuery };
+
+  // If the page number is not provided, set it to 1
+  const pageNumber = parseInt(page) || 1;
+  const productsLimit = parseInt(limit) || 21;
+  // console.log("Page Number:", productsLimit);
+  // console.log("Query:", query);
+  try {
+    // Fetch all appliances items from the database with pagination
+    let womenswear = await WomensWear.find(queryObject)
+      .limit(productsLimit)
+      .skip((pageNumber - 1) * productsLimit); //finding all the appliances items according to the query
+    // console.log(appliances);
+
+    // Check if the appliances collection is empty
+    if (!womenswear || womenswear.length === 0) {
+      res.status(200).json({
+        success: false,
+        message: "No appliances items Not found",
+        womenswear: [],
+      });
     }
-  });
 
-   // Decode the query parameters
-  for (let key in parsedQuery) {
-    parsedQuery[key] = decodeURIComponent(parsedQuery[key]);
+
+    
+    let extraPages = Math.ceil(womenswear.length / productsLimit);
+    if (womenswear.length > productsLimit) {
+      womenswear = womenswear.slice(0, productsLimit); //slicing the womenswear items according to the limit
+      // Send the womenswear items as the response
+    }
+
+
+    // Send the appliances items as the response
+    res.status(200).json({
+      success: true,
+      count: womenswear.length,
+      womenswear: womenswear, //sending the retrieved appliances collection in response !
+      extraPages: extraPages-1,
+    });
+  } catch (error) {
+    console.log("An error occurred:", error.message);
+    // Pass the error to the error-handling middleware
+    return next(new ErrorHandler("Failed to retrieve appliances items", 500));
   }
-
-  console.log('PARSED QUERY',parsedQuery)
-  return parsedQuery;
-  
-};
+});
 
 //example : http://localhost:8080/api/womenswear?pageNo=1&limit=25&category=Sports%20&%20Active%20Wear&sub_category=Clothing
 // Get all womenswear items
