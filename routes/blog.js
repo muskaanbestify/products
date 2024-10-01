@@ -24,6 +24,43 @@ router.get('/', async(req, res, next) => {
     }
 })
 
+// GET /api/title - Get all blog titles
+router.get('/title', async (req, res) => {
+  try {
+      const titles = await Blog.find({}, 'title'); // Fetch all titles
+
+      //handle error case
+      if (!titles){
+        return res.status(404).json({ message: 'titles not found' }); 
+      }
+      res.json(titles);
+  } catch (err) {
+      console.error('Error:', err);
+      res.status(500).json({ message: err.message });
+  }
+});
+
+//Get a specific blog item by title
+
+router.get('/title/:title', async(req, res) => {
+
+  try{
+    console.log("request params:", req.params);
+    const title = req.params.title
+    let blog = await Blog.findOne({title})
+    
+    // Handle not found case
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' }); 
+  }
+    res.json(blog)
+  }
+  catch(error){
+    console.error('Error: ', error)
+    res.status(500).json({message: error.message})
+  }
+})
+
 //get a blog item by id
 router.get('/:id', async(req, res) => {
     try{
