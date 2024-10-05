@@ -32,7 +32,7 @@ app.use('/api/beauty', beautyRoutes );
 app.use('/api/phoneaccessories', phoneaccessoriesRoutes);
 app.use('/api/banner', bannerRoutes);
 app.use('/api/blogs', blogsRoutes);
-app.use('/api/certificate-verification', certificationVerificationRoutes);
+app.use('/api/certificate-verification', certificateVerificationRoutes);
 
 
 // MongoDB connection
