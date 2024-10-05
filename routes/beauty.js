@@ -33,7 +33,7 @@ router.get("/", async (req, res, next) => {
     if (!beautyProduct || beautyProduct.length === 0) {
       res.status(200).json({
         success: false,
-        message: "No appliances items Not found",
+        message: "No items found",
         beautyProduct: [],
       });
     }
