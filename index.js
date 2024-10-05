@@ -11,7 +11,7 @@ const beautyRoutes = require("./routes/beauty")
 const phoneaccessoriesRoutes = require("./routes/phonesaccessories")
 const bannerRoutes = require("./routes/banner")
 const blogsRoutes = require('./routes/blogs');
-const certificationVerificationRoutes = require('./routes/certificateverification');
+const certificationVerificationRoutes = require('./routes/certificationverification');
 
 dotenv.config();
 
@@ -32,7 +32,7 @@ app.use('/api/beauty', beautyRoutes );
 app.use('/api/phoneaccessories', phoneaccessoriesRoutes);
 app.use('/api/banner', bannerRoutes);
 app.use('/api/blogs', blogsRoutes);
-app.use('/api/certificate-verification', certificateVerificationRoutes);
+app.use('/api/certificate-verification', certificationVerificationRoutes);
 
 
 // MongoDB connection
