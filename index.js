@@ -11,7 +11,7 @@ const beautyRoutes = require("./routes/beauty")
 const phoneaccessoriesRoutes = require("./routes/phonesaccessories")
 const bannerRoutes = require("./routes/banner")
 const blogsRoutes = require('./routes/blogs');
-const certificationVerificationRoutes = require('./routes/certificationverification');
+const certificationVerificationRoutes = require('./routes/certificateverification');
 
 dotenv.config();
 
